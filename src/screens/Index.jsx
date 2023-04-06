@@ -19,11 +19,12 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         alignItems: "center",
-        gap: 20
+        gap: 20,
+        paddingTop: 100
     },
     logo: {
         width: 200,
         height: 200,
-        marginTop: 70
+        
     }
 })
