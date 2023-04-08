@@ -1,29 +1,45 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet, Dimensions } from 'react-native'
 import { View, Image } from 'react-native'
 import logo from "../../images/SublimePrints.png"
 import design from "../../images/design.png"
+import LogIn from './LogIn'
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function Index() {
   return (
-    <View style={styles.viewIndex}>
-        <Image style={styles.logo} source={logo}/>
-        <Image source={design}/>
-    </View>
+    <ScrollView>
+      <View style={styles.viewIndex}>
+          <Image style={styles.logo} source={logo}/>
+          <Image source={design}/>
+        <View style={styles.login}>
+          <LogIn/>
+        </View>
+      </View>
+      
+        
+      
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
     viewIndex: {
         backgroundColor: "white",
-        width: "100%",
-        height: "100%",
+        width: windowWidth,
+        height: windowHeight,
         alignItems: "center",
-        gap: 20
+        justifyContent: "center",
+        gap: 20,
     },
     logo: {
         width: 200,
         height: 200,
-        marginTop: 70
+        
+    },
+    login: {
+      paddingTop: 30
     }
 })
