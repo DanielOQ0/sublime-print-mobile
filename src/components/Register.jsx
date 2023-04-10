@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/core'
 import axios from 'axios'
 import Spinner from 'react-native-loading-spinner-overlay'
 import google from "../../images/Google.png"
-import Welcome from '../components/Welcome'
+import Welcome from './Welcome'
 import { AntDesign } from '@expo/vector-icons'
 
 export default function Register() {
@@ -22,12 +22,12 @@ export default function Register() {
     let data = {
         name: name,
         email: email,
-        photo: photo,
         phone: phone,
+        photo: photo,
         password: password
     }
     console.log(data);
-    let url = 'https://localhost:8080/api/auth/signup/'
+    let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signup/'
     try {
         await axios.post(url, data)
         console.log('creado')
@@ -80,7 +80,7 @@ export default function Register() {
         <View style={styles.fieldset}>
           <Text style={styles.legend}>Phone</Text>
           <View style={styles.legendCont}>
-            <TextInput style={styles.input} id="phone" name="phone" required onChangeText={(inputText => setPhone(inputText))} />
+            <TextInput style={styles.input} id="phone" name="phone" onChangeText={(inputText => setPhone(inputText))} />
             <AntDesign name="phone" size={25} color="black" />
           </View>
         </View>
@@ -126,7 +126,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 15,
     width: "100%",
-    backgroundColor: "white"
+    backgroundColor: "white",
+    marginBottom: 20
   },
   fieldset: {
     display: "flex",

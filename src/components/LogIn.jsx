@@ -1,5 +1,7 @@
 import React from 'react'
 import { View,TextInput, Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import google from "../../images/Google.png"
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/core';
@@ -28,7 +30,7 @@ export default function LogIn() {
             password: password
         }
         console.log(data);
-        let url = 'https://localhost:8080/api/auth/signin/'
+        let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signin/'
         let admin
         let author
         try {
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
           alignItems: "center",
           gap: 10,
           width: "100%",
+          height: "100%",
           marginTop: 50
         },
         fieldset: {
@@ -158,7 +161,6 @@ const styles = StyleSheet.create({
           alignItems: "center",
           justifyContent: "center",
           gap: 30,
-          marginRight: 90
         },
         button: {
           backgroundColor: "#00b2a5",

@@ -1,45 +1,31 @@
-import React from 'react'
-import { ScrollView, StyleSheet, Dimensions } from 'react-native'
-import { View, Image } from 'react-native'
-import logo from "../../images/SublimePrints.png"
-import design from "../../images/design.png"
-import LogIn from './LogIn'
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+import React from "react";
+import { ScrollView } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import Home from "../components/Home";
+import Form from "./Form"
 
 export default function Index() {
-  return (
-    <ScrollView>
-      <View style={styles.viewIndex}>
-          <Image style={styles.logo} source={logo}/>
-          <Image source={design}/>
-        <View style={styles.login}>
-          <LogIn/>
-        </View>
-      </View>
-      
-        
-      
-    </ScrollView>
-  )
-}
+    let state = "Register"
+    let [token, setToken] = useState("")
 
-const styles = StyleSheet.create({
-    viewIndex: {
-        backgroundColor: "white",
-        width: windowWidth,
-        height: windowHeight,
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 20,
-    },
-    logo: {
-        width: 200,
-        height: 200,
-        
-    },
-    login: {
-      paddingTop: 30
-    }
-})
+    useFocusEffect(React.useCallback(() =>{
+        async function getData(){
+            try{
+                const value = await AsyncStorage.getItem("token")
+                setToken(value)
+            }catch(error){
+                console.log(error)
+            }
+        }
+        getData()
+    }, [state]))
+
+    return (
+        <ScrollView>
+            <Home/>
+            {token ? "" : <Form state={state} />}
+        </ScrollView>
+    );
+}
