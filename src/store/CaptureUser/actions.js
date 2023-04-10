@@ -5,7 +5,7 @@ let captureUser =createAsyncThunk("captureUser",
 async()=>{
     let token = localStorage.getItem("token");
     let headers = { headers: { Authorization: `Bearer ${token}` } };
-    let url = "https://subime-print-fgbog.ondigitalocean.app/api/users";
+    let url = "https://subime-print-fgbog.ondigitalocean.app/api/users/";
     try {
         if(token){
             let res = await axios.get(url, headers);

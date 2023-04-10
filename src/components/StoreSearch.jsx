@@ -28,7 +28,8 @@ export default function StoreSearch() {
 const styles = StyleSheet.create({
     titleText: {
         color: "black",
-        fontSize: 60
+        fontSize: 60,
+        paddingBottom: 20
     },
     search: {
       display: "flex",

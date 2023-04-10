@@ -6,7 +6,7 @@ import categoriesReducer from './Categories/reducer'
 import productsReducer from "./Products/reducer"
 import detailsReducer from "./Details/reducer"
 
-const store = configureStore({
+export const store = configureStore({
     reducer: {
         tabsReducer: tabsReducer,
         userReducer: userReducer,
@@ -16,5 +16,3 @@ const store = configureStore({
         details: detailsReducer,
     }
 })
-
-export default store
