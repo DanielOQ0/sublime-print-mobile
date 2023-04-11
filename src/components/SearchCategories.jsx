@@ -16,7 +16,6 @@ function SearchCategories() {
     const dispatch = useDispatch()
 
     let checkedCategories = useSelector(store => store)
-    console.log(checkedCategories)
 
     let categoriesUrl = "https://subime-print-fgbog.ondigitalocean.app/api/products/"
     useEffect(() => {
