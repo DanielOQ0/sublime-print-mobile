@@ -42,7 +42,7 @@ function Logout() {
   }, []);
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: "#00b2a5"}}>
       <View style={styles.logout}>
         <Text style={styles.textLogout}>Thank you for the visit, we are waiting for you back!</Text>
       </View>
@@ -59,9 +59,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textLogout: {
-    color: "orange",
+    color: "white",
     fontSize: 20,
-    backgroundColor: "white",
     borderRadius: 16,
     padding: 5,
     width: "80%",

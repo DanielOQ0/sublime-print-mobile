@@ -1,101 +1,120 @@
-import React from 'react'
-import { ScrollView, View, Image, Text } from 'react-native'
-import image1 from "../../images/imagecart1.jpg"
-import image2 from "../../images/imagecart2.jpg"
-import image3 from "../../images/imagecart3.jpg"
-import image4 from "../../images/imagecart4.jpg"
-import image5 from "../../images/imagecart5.jpg"
-import { StyleSheet } from 'react-native'
-import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import actions from "../store/Products/actions.js";
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function CardsProducts() {
-    let text = useSelector(store => store.text.text)
-    let [text1,setText1] = useState(useSelector(store => store.text.text))
-    useEffect( () => {
-        setText1(text)
-    }, [text]);
+const { read_products } = actions;
 
-  return (
-    <ScrollView>
-        <View style={styles.cardProduct}>
-            <Image source={image1} style={styles.image}/>
-            <Text style={styles.title}>"T-Shirt"</Text>
-            <Text style={styles.price}> $100</Text>
-        </View>
-        <View style={styles.cardProduct}>
-            <Image source={image2} style={styles.image}/>
-            <Text style={styles.title}>"T-Shirt Pack"</Text>
-            <Text style={styles.price}> $250</Text>
-        </View>
-        <View style={styles.cardProduct}>
-            <Image source={image3} style={styles.image}/>
-            <Text style={styles.title}>"Mug"</Text>
-            <Text style={styles.price}> $115</Text>
-        </View>
-        <View style={styles.cardProduct}>
-            <Image source={image4} style={styles.image}/>
-            <Text style={styles.title}>"Mug Set"</Text>
-            <Text style={styles.price}> $235</Text>
-        </View>
-        <View style={styles.cardProduct}>
-            <Image source={image5} style={styles.image}/>
-            <Text style={styles.title}>"Cap"</Text>
-            <Text style={styles.price}> $125</Text>
-        </View>
-        <View style={styles.ViewBtns}>
-        <TouchableOpacity style={styles.btns}>
-            <Text style={styles.textBtns}>Next</Text>
-        </TouchableOpacity>
-        </View>
-    </ScrollView>
-  )
+function CardsProducts() {
+    const [reload, setReload] = useState(false);
+    const [cart, setCart] = useState([]);
+    const products = useSelector(store => store.products.products);
+    console.log(products)
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(read_products({ products }));
+    }, [reload]);
+    const handleBuyProduct = (_id) => {
+        // Buscar el producto por ID
+        const productToBuy = products.find(product => product._id === _id);
+
+        // Validar que el producto exista
+        if (!productToBuy) {
+            console.log(`No se encontró el producto con ID ${_id}`);
+            return;
+        }
+
+        // Agregar el producto al carrito
+        setCart([...cart, productToBuy]);
+
+        console.log(`Añadido al carrito: ${productToBuy.name}`);
+    };
+
+    return (
+        <ScrollView>
+            <View style={styles.container}>
+                {products.map((product) => (
+                    <View style={styles.card} key={product._id}>
+                        <Image style={styles.cardImage} source={{ uri: product.image }} />
+                        <View style={styles.cardContent}>
+                            <Text style={styles.cardTitle}>{product.name}</Text>
+                            <Text style={styles.cardPrice}>${product.price}</Text>
+                            <Text style={styles.cardDescription}>{product.description}</Text>
+                            <TouchableOpacity
+                                style={styles.buyButton}
+                                onPress={() => handleBuyProduct(product._id)}
+                            >
+                                <Text style={styles.buyButtonText}>Buy</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ))}
+            </View>
+            <TouchableOpacity
+                style={styles.viewCartButton}
+                onPress={() => navigation.navigate('Cart', { cart })}
+            >
+                <Text style={styles.viewCartButtonText}>Ver carrito ({cart.length})</Text>
+            </TouchableOpacity>
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
-    cardProduct: {
-        display: "flex",
+    container: {
+        flex: 1,
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        backgroundColor: "white",
-        padding: 10,
-        marginLeft: 20,
-        width: "90%",
-        borderColor: "black",
-        borderWidth: 1,
-        borderRadius: 10,
-        marginBottom: 10
+        flexWrap: "wrap",
+        justifyContent: "space-around",
+        paddingVertical: 16,
     },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 10
+    card: {
+        width: "45%",
+        borderRadius: 8,
+        backgroundColor: "#fff",
+        marginBottom: 16,
+        overflow: "hidden",
     },
-    title: {
-        fontSize: 20
+    cardImage: {
+        height: 150,
+        marginTop: 5,
+        width: "100%",
     },
-    price: {
-        color: "red",
-        fontSize: 15
+    cardContent: {
+        paddingHorizontal: 16,
+        paddingBottom: 16,
     },
-    ViewBtns: {
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 30,
-        marginTop: 20
+    cardTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginTop: 16,
     },
-    btns: {
+    cardPrice: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#00b2a5",
+        marginTop: 8,
+    },
+    cardDescription: {
+        fontSize: 14,
+        marginTop: 8,
+    },
+    buyButton: {
         backgroundColor: "#00b2a5",
-        borderRadius: 16,
-        width: 70,
-        height: 30,
-        justifyContent: "center",
+        borderRadius: 8,
+        marginBottom: 10,
+        padding: 5,
         alignItems: "center",
     },
-    textBtns: {
-        color: "white"
-    }
-})
+    buyButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+});
+
+export default CardsProducts;
