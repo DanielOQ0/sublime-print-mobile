@@ -13,9 +13,9 @@ function CardsProducts() {
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
-
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzYxNmE5NmFiM2YzZDZmMDU2ZWQyNCIsImlhdCI6MTY4MTI2NjQxNCwiZXhwIjoxNjgxNDM5MjE0fQ.4iRCULmjlujh9FA1Gv2taYieuSlMFBWtw_zbj_BUOes"
     useEffect(() => {
-        dispatch(read_products({ products }));
+        dispatch(read_products({ products, token: token }));
     }, [reload]);
     const handleBuyProduct = (_id) => {
         // Buscar el producto por ID
@@ -31,6 +31,8 @@ function CardsProducts() {
         setCart([...cart, productToBuy]);
 
         console.log(`Añadido al carrito: ${productToBuy.name}`);
+
+        // navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
     };
 
     return (
@@ -55,7 +57,7 @@ function CardsProducts() {
             </View>
             <TouchableOpacity
                 style={styles.viewCartButton}
-                onPress={() => navigation.navigate('Cart', { cart })}
+                onPress={() => navigation.navigate('shopping-cart', { cart })}
             >
                 <Text style={styles.viewCartButtonText}>Ver carrito ({cart.length})</Text>
             </TouchableOpacity>
