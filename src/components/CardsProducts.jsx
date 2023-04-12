@@ -6,7 +6,7 @@ import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from "rea
 
 const { read_products } = actions;
 
-function CardsProducts() {
+function CardProducts() {
     const [reload, setReload] = useState(false);
     const [cart, setCart] = useState([]);
     const products = useSelector(store => store.products.products);
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CardsProducts;
+export default CardProducts;
