@@ -28,7 +28,7 @@ export default function StoreSearch() {
 const styles = StyleSheet.create({
     titleText: {
         color: "black",
-        fontSize: 60
+        fontSize: 50,
     },
     search: {
       display: "flex",
@@ -40,7 +40,8 @@ const styles = StyleSheet.create({
       borderRadius: 15,
       backgroundColor: "white",
       gap: 5,
-      paddingLeft: 10
+      paddingLeft: 10,
+      marginTop: 50
     },
     inputSearch: {
       alignItems: "center",

@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { View, TouchableOpacity, TextInput, Text, Image, StyleSheet, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/core'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios'
 import Spinner from 'react-native-loading-spinner-overlay'
 import google from "../../images/Google.png"
@@ -8,49 +9,66 @@ import Welcome from './Welcome'
 import { AntDesign } from '@expo/vector-icons'
 
 export default function Register() {
-  const [name, setName] = useState('');     
-  const [email, setEmail] = useState('');     
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [photo, setPhoto] = useState('');
-  const [phone, setPhone] = useState('')    
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('');
-  const navigation= useNavigation()
+  const navigation = useNavigation()
   const [loading, setLoading] = useState()
 
   async function handleSubmit() {
     setLoading(true)
 
     let data = {
-        name: name,
-        email: email,
-        phone: phone,
-        photo: photo,
-        password: password
+      name: name,
+      email: email,
+      // phone: phone,
+      // photo: photo,
+      password: password
     }
     console.log(data);
-    let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signup/'
+    let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signup'
     try {
-        await axios.post(url, data)
-        console.log('creado')
-        setTimeout(() =>{
-          setLoading(false);
-        }, 3000)
-        navigation.navigate("Login")
-        Alert.alert(
-          "Welcome to Sublime Prints!",
-          "Account created successfully"
-        )
-    
-    } catch (error) {
-        console.log(error)
+      const token = await AsyncStorage.getItem('token')
+      const response = await axios.post(url, data, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+  
+      console.log('creado')
+      setTimeout(() => {
         setLoading(false)
-    }
+      }, 3000)
+      navigation.navigate('Home')
+      Alert.alert(
+        'Welcome to Sublime Prints!',
+        'Account created successfully'
+      )
+      }catch (error) {
+        if (error.response) {
+          // Si se recibió una respuesta del servidor pero con un código de estado fuera del rango 2xx
+          console.log('Error en la respuesta:', error.response.data);
+          console.log('Código de estado:', error.response.status);
+          console.log('Headers de respuesta:', error.response.headers);
+        } else if (error.request) {
+          // Si no se recibió ninguna respuesta del servidor
+          console.log('Error de solicitud:', error.request);
+        } else {
+          // Si ocurrió algún otro tipo de error
+          console.log('Error:', error.message);
+        }
+        setLoading(false)
+      }
+      
   }
 
 
- return (
-   <ScrollView style={{backgroundColor: "white"}}>
+  return (
+    <ScrollView style={{ backgroundColor: "white" }}>
       <View style={styles.welcome}>
-        <Welcome/>
+        <Welcome />
       </View>
       <View style={styles.ViewRegister}>
         <View style={styles.fieldset}>
@@ -64,7 +82,7 @@ export default function Register() {
         <View style={styles.fieldset}>
           <Text style={styles.legend}>Email</Text>
           <View style={styles.legendCont}>
-            <TextInput style={styles.input} id="mail" name="mail" required onChangeText={(inputText => setEmail(inputText))} />
+            <TextInput style={styles.input} id="email" name="email" required onChangeText={(inputText => setEmail(inputText))} />
             <AntDesign name="mail" size={25} color="black" />
           </View>
         </View>
@@ -72,7 +90,7 @@ export default function Register() {
         <View style={styles.fieldset}>
           <Text style={styles.legend}>Photo</Text>
           <View style={styles.legendCont}>
-            <TextInput style={styles.input} id="photo" name="photo" required onChangeText={(inputText => setPhoto(inputText))} />
+            <TextInput style={styles.input} id="photo" name="photo"  onChangeText={(inputText => setPhoto(inputText))} />
             <AntDesign name="camerao" size={25} color="black" />
           </View>
         </View>
@@ -108,11 +126,11 @@ export default function Register() {
           <Text>
             Already have an account?
             <Text style={styles.parrafosFormText} onPress={() => {
-                navigation.navigate("Home");
-              }}> Log in</Text> 
+              navigation.navigate("Home");
+            }}> Log in</Text>
           </Text>
         </View>
-        <Spinner visible={loading}/>
+        <Spinner visible={loading} />
       </View>
     </ScrollView>
   );
@@ -140,23 +158,23 @@ const styles = StyleSheet.create({
     background: "#00b2a5",
     borderWidth: 1,
   },
-  legendCont:{
+  legendCont: {
     display: "flex",
-    width:"100%",
+    width: "100%",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
-  imagen:{
+  imagen: {
     width: 18,
     height: 18,
     marginBottom: 10,
   },
   googleImg: {
     width: 30,
-    height:30
+    height: 30
   },
-  buttonText2:{
+  buttonText2: {
     color: "gray"
   },
   legend: {
@@ -184,7 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   buttonText: {
     color: "white",
     fontSize: 20
@@ -202,7 +220,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 20
   },
-  
+
   buttonText3: {
     color: "grey"
   },
@@ -228,11 +246,11 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
 
-  parrafosFormText:{
+  parrafosFormText: {
     color: "#00b2a5",
     fontWeight: 700,
   },
-  welcome:{
+  welcome: {
     marginBottom: 20
   }
 });
