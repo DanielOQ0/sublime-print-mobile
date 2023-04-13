@@ -1,23 +1,45 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import actions from "../store/Products/actions.js";
 import { StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from "react-redux";
+const { read_products } = actions;
+
 function ProductScreen() {
     const route = useRoute();
     const [cart, setCart] = useState(route.params?.cart || []);
     const [totalPrice, setTotalPrice] = useState(() => cart.reduce((total, product) => total + product.price, 0));
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const products = useSelector(store => store.products.products);
+    const [token, setToken] = useState();
+
+    useFocusEffect(React.useCallback(() => {
+        async function getData() {
+            try {
+                const value = await AsyncStorage.getItem('token');
+                dispatch(read_products({ products: products._id, token: value }));
+                setToken(value)
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getData();
+    }, [cart, route.params]));
+
     const removeFromCart = (product) => {
         const newCart = cart.filter((item) => item._id !== product._id);
         setCart(newCart);
         setTotalPrice(totalPrice - product.price);
     };
+
     const handleBuy = () => {
         alert('¡Gracias por tu compra!');
         route.params.setCart([]);
     };
-
 
     return (
         <ScrollView>
@@ -100,6 +122,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProductScreen;
-
-
-

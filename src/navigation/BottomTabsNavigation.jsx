@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Index from "../screens/Index";
 import Form from "../screens/Form";
-import ProductScreen  from "../screens/ProductScreen";
+import Cart from '../components/Cart'
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/core";
@@ -87,7 +87,7 @@ function BottomTabsNavigation() {
           <Tab.Screen
 
             name="shopping-cart"
-            component={ProductScreen}
+            component={Cart}
             options={{
               headerShown: false,
               tabBarIcon: ({ color }) => (

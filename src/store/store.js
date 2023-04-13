@@ -5,7 +5,7 @@ import textReducer from './Search/reducer'
 import categoriesReducer from './Categories/reducer'
 import productsReducer from "./Products/reducer"
 import detailsReducer from "./Details/reducer"
-import cartReducer from "./Cart/cartReducer"
+
 const store = configureStore({
     reducer: {
         tabsReducer: tabsReducer,
@@ -14,7 +14,7 @@ const store = configureStore({
         categories: categoriesReducer, 
         products: productsReducer,
         details: detailsReducer,
-        cart: cartReducer,
+       
     }, 
 
 })

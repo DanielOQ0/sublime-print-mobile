@@ -1,22 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import actions from "../store/Products/actions.js";
-import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
 const { read_products } = actions;
 
 function CardsProducts() {
     const [reload, setReload] = useState(false);
+    const route = useRoute();
     const [cart, setCart] = useState([]);
     const products = useSelector(store => store.products.products);
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const [token, setToken] = useState();
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzYxNmE5NmFiM2YzZDZmMDU2ZWQyNCIsImlhdCI6MTY4MTI2NjQxNCwiZXhwIjoxNjgxNDM5MjE0fQ.4iRCULmjlujh9FA1Gv2taYieuSlMFBWtw_zbj_BUOes"
-    useEffect(() => {
-        dispatch(read_products({ products, token: token }));
-    }, [reload]);
+    useFocusEffect(React.useCallback(() => {
+        async function getData() {
+            try {
+                const value = await AsyncStorage.getItem('token');
+                dispatch(read_products({ token: value }));
+                setToken(value)
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getData();
+    }, [cart, route.params]));
+
     const handleBuyProduct = (_id) => {
         // Buscar el producto por ID
         const productToBuy = products.find(product => product._id === _id);
@@ -28,12 +41,12 @@ function CardsProducts() {
         }
 
         // Agregar el producto al carrito
-        setCart([...cart, productToBuy]);
+        setCart(prevCart => [...prevCart, productToBuy]);
 
         console.log(`Añadido al carrito: ${productToBuy.name}`);
 
         // navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
-    };
+    }
 
     return (
         <ScrollView>
@@ -64,6 +77,7 @@ function CardsProducts() {
         </ScrollView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
