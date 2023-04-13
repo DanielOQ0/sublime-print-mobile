@@ -15,9 +15,8 @@ function SearchCategories() {
     const { captureCheck } = categoriesActions
     const dispatch = useDispatch()
 
-    let checkedCategories = useSelector(store => store.products.categories)
-
-    let categoriesUrl = "https://subime-print-fgbog.ondigitalocean.app/api/products"
+    let checkedCategories = useSelector(store => store.categories.categories)
+    let categoriesUrl = "https://subime-print-fgbog.ondigitalocean.app/api/categories/"
     useEffect(() => {
         axios.get(categoriesUrl).then(e => setCategories(e.data.data))
     }, [])

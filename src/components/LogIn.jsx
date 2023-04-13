@@ -30,6 +30,7 @@ export default function LogIn() {
             password: password
         }
         console.log(data);
+        
         let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signin/'
         let admin
         let author
@@ -42,8 +43,8 @@ export default function LogIn() {
                 id: res.data.user._id,
                 name: res.data.user.name,
                 email: res.data.user.email,
-                phone: res.data.user.phone,
-                photo: res.data.user.photo,
+                // phone: res.data.user.phone,
+                // photo: res.data.user.photo,
                 admin,
                 author
               }))
