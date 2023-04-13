@@ -18,7 +18,6 @@ function CardsProducts() {
     let text = useSelector(store => store.text.text)
     let order = useSelector(store => store.order.order)
     const products = useSelector(store => store.products.products);
-    console.log(products)
     const [token, setToken] = useState();
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -80,7 +79,7 @@ function CardsProducts() {
                 {
                     products ? (products.length ? (products.map((product, i) =>{
                         return (
-                            <View style={styles.card} key={product._id}>
+                            <View style={styles.card} key={i}>
                                 <Image style={styles.cardImage} source={{ uri: product.image }} />
                                 <View style={styles.cardContent}>
                                     <Text style={styles.cardTitle}>{product.name}</Text>
@@ -102,6 +101,7 @@ function CardsProducts() {
                     ) : (
                         <View/>
                     )}
+            </View>
                      <View style={styles.pageBtns}>
                         {
                         page === 1 ? <></> :
@@ -116,7 +116,6 @@ function CardsProducts() {
                             </TouchableOpacity> : <></>
                         }
                     </View>
-            </View>
             
         </ScrollView>
     );
@@ -183,7 +182,8 @@ const styles = StyleSheet.create({
         width: 70,
         height: 30,
         marginBottom: 20,
-        marginTop: 20
+        marginTop: 40,
+        marginLeft: 180
 
     },
     btns: {

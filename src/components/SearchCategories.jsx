@@ -7,6 +7,8 @@ import categoriesActions from '../store/Categories/actions'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { TouchableOpacity } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 let categoriesCheck = []
 
@@ -16,10 +18,23 @@ function SearchCategories() {
     const dispatch = useDispatch()
 
     let checkedCategories = useSelector(store => store.categories.categories)
+
+    console.log(checkedCategories)
     let categoriesUrl = "https://subime-print-fgbog.ondigitalocean.app/api/categories/"
-    useEffect(() => {
-        axios.get(categoriesUrl).then(e => setCategories(e.data.data))
-    }, [])
+
+    useFocusEffect(React.useCallback(() => {
+        async function getData() {
+            try {
+                const token = await AsyncStorage.getItem('token');
+                let headers = { headers: { Authorization: `Bearer ${token}` } }; 
+                axios.get(categoriesUrl, headers).then(e => setCategories(e.data.Categories))
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getData();
+    }, []));
 
     function handleCheck(e, categoryName) {
         categories.forEach(category => {
@@ -39,8 +54,8 @@ function SearchCategories() {
             {
                 categories ? categories.map((category, i) => {
                     let checkclass = checkedCategories.includes(category._id) ? "checked" : ""
-                    return <TouchableOpacity style={[styles[`category-${category.name}`], checkclass && styles.checked]} key={i} onPress={(event) => handleCheck(event, category.name)} categoryName={category.name} >
-                        <Text style={[styles[`text-${category.name}`]]}>{category.name}</Text>
+                    return <TouchableOpacity style={[styles.category, checkclass && styles.checked]} key={i} onPress={(event) => handleCheck(event, category.name)} categoryName={category.name} >
+                        <Text style={styles.text}>{category.name}</Text>
                     </TouchableOpacity>
                 }) : ""
             }
@@ -50,71 +65,36 @@ function SearchCategories() {
 
 const styles = StyleSheet.create({
     categoriesType: {
+        width: "90%",
+        height: 100,
         display: 'flex',
-        flexDirection: 'row',
+        flexWrap: "wrap",
+        flexDirection: "row",
         justifyContent: "center",
+        alignItems: "center",
         marginHorizontal: 5,
         gap: 8,
         marginBottom: 20,
+        marginTop: 30
     },
-    'category-Shirts': {
+    category: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        width: 65,
+        width: 80,
         height: 35,
         borderRadius: 50,
         fontWeight: '500',
         fontSize: 12,
-        backgroundColor: 'black',
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: "black"
     },
-    'category-comic': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 65,
-        height: 35,
-        borderRadius: 50,
-        fontWeight: '500',
-        fontSize: 12,
-        backgroundColor: '#E0DBFF',
-    },
-    'category-shojo': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 65,
-        height: 35,
-        borderRadius: 50,
-        fontWeight: '500',
-        fontSize: 12,
-        backgroundColor: '#D1FBF0',
-    },
-    'category-seinen': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 65,
-        height: 35,
-        borderRadius: 50,
-        fontWeight: '500',
-        fontSize: 12,
-        backgroundColor: '#FFDFC8',
-    },
-    'text-shonen': {
-        color: '#EF8481',
-    },
-    'text-comic': {
-        color: '#8883F0',
-    },
-    'text-shojo': {
-        color: '#00BA88',
-    },
-    'text-seinen': {
-        color: '#FC9C57',
+    text: {
+        color: 'black',
     },
     checked: {
-        borderColor: 'rgba(0, 0, 0, 0.5)',
+        borderColor: '#00b2a5',
         borderWidth: 1,
         opacity: 0.5,
         transform: [
