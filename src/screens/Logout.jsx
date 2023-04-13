@@ -33,7 +33,7 @@ function Logout() {
         console.log('Logout')
         dispatch(reloadTabs({ state: !state }))
         setLoading(false)
-        setTimeout(() => navigation.navigate('Home'), 1000)
+        setTimeout(() => navigation.navigate('Home'), 3000)
       } catch (error) {
         console.log(error);
       }

@@ -19,7 +19,7 @@ export default function StoreSearch() {
         <Text style={styles.titleText}>Discovery</Text>
         <View style={styles.search}>
             <Image source={lupa} style={styles.lupa}/>
-            <TextInput style={styles.inputSearch} placeholder='Find the clothes you want' onChangeText={handleSearch}/>            
+            <TextInput style={styles.inputSearch} placeholder='Find the products you want' onChangeText={handleSearch}/>            
         </View>
     </ScrollView>
   )

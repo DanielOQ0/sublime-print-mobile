@@ -23,12 +23,12 @@ export default function Register() {
     let data = {
       name: name,
       email: email,
-      // phone: phone,
-      // photo: photo,
+      phone: phone,
+      photo: photo,
       password: password
     }
     console.log(data);
-    let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signup'
+    let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signup/'
     try {
       const token = await AsyncStorage.getItem('token')
       const response = await axios.post(url, data, {
@@ -126,7 +126,7 @@ export default function Register() {
           <Text>
             Already have an account?
             <Text style={styles.parrafosFormText} onPress={() => {
-              navigation.navigate("Home");
+              navigation.navigate("LogIn");
             }}> Log in</Text>
           </Text>
         </View>

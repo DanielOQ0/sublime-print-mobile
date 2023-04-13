@@ -1,26 +1,31 @@
 import React from 'react'
-import { Text, View, Image, Button } from 'react-native'
+import { Text, View, TouchableOpacity, Button} from 'react-native'
 import { StyleSheet } from 'react-native'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import categoriesActions from '../store/Categories/actions'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import { TouchableOpacity } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 let categoriesCheck = []
 
 function SearchCategories() {
     const [categories, setCategories] = useState(false)
     const { captureCheck } = categoriesActions
+    const [filters, setFilters] = useState([]);
+    let token = AsyncStorage.getItem("token")
+    let headers = { headers: { Authorization: `Bearer ${token}` } };
     const dispatch = useDispatch()
 
-    let checkedCategories = useSelector(store => store.products.categories)
-
-    let categoriesUrl = "https://subime-print-fgbog.ondigitalocean.app/api/products"
+    let checkedCategories = useSelector((store) => store.categories.categories)
+    
     useEffect(() => {
-        axios.get(categoriesUrl).then(e => setCategories(e.data.data))
-    }, [])
+        axios.get("https://subime-print-fgbog.ondigitalocean.app/api/categories", headers).then(e => {
+          setCategories(e.data.Categories);
+          console.log('categories:', e.data.Categories);
+        });
+      }, []);
 
     function handleCheck(e, categoryName) {
         categories.forEach(category => {
@@ -34,14 +39,36 @@ function SearchCategories() {
             }
         })
     }
+    useEffect(() => {
+        const fetchCategories = async () => {
+          try {
+            const response = await axios.get('http://subime-print-fgbog.ondigitalocean.app/api/categories', headers);
+            const categories = response.data.Categories;
+            const cat = {
+              id: 'category',
+              name: 'Category',
+              options: categories.map((category) => ({
+                value: category._id,
+                label: category.name,
+                checked: false,
+              })),
+            };
+            setFilters([cat]);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+    
+        fetchCategories();
+      }, []);
 
     return (
         <View style={styles.categoriesType}>
             {
                 categories ? categories.map((category, i) => {
                     let checkclass = checkedCategories.includes(category._id) ? "checked" : ""
-                    return <TouchableOpacity style={[styles[`category-${category.name}`], checkclass && styles.checked]} key={i} onPress={(event) => handleCheck(event, category.name)} categoryName={category.name} >
-                        <Text style={[styles[`text-${category.name}`]]}>{category.name}</Text>
+                    return <TouchableOpacity style={[styles.category, checkclass && styles.checked]} key={i} onPress={(event) => handleCheck(event, category.name)} categoryName={category.name} >
+                        <Text style={styles.textCategory}>{category.name}</Text>
                     </TouchableOpacity>
                 }) : ""
             }
@@ -58,7 +85,7 @@ const styles = StyleSheet.create({
         gap: 8,
         marginBottom: 20,
     },
-    'category-Shirts': {
+    category: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -69,50 +96,8 @@ const styles = StyleSheet.create({
         fontSize: 12,
         backgroundColor: 'black',
     },
-    'category-comic': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 65,
-        height: 35,
-        borderRadius: 50,
-        fontWeight: '500',
-        fontSize: 12,
-        backgroundColor: '#E0DBFF',
-    },
-    'category-shojo': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 65,
-        height: 35,
-        borderRadius: 50,
-        fontWeight: '500',
-        fontSize: 12,
-        backgroundColor: '#D1FBF0',
-    },
-    'category-seinen': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 65,
-        height: 35,
-        borderRadius: 50,
-        fontWeight: '500',
-        fontSize: 12,
-        backgroundColor: '#FFDFC8',
-    },
-    'text-shonen': {
+    textCategory: {
         color: '#EF8481',
-    },
-    'text-comic': {
-        color: '#8883F0',
-    },
-    'text-shojo': {
-        color: '#00BA88',
-    },
-    'text-seinen': {
-        color: '#FC9C57',
     },
     checked: {
         borderColor: 'rgba(0, 0, 0, 0.5)',

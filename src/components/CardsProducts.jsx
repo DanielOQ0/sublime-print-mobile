@@ -1,23 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import actions from "../store/Products/actions.js";
+import productsActions from "../store/Products/actions.js";
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import productsClickActions from "../store/ProductsPagination/actions.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import { useRoute } from '@react-navigation/native';
 
-const { read_products } = actions;
+const { read_products } = productsActions;
+const { productsPagination } = productsClickActions
 
 function CardProducts() {
-    const [reload, setReload] = useState(false);
+    let text = useSelector(store => store.text.text)
+    let categories = useSelector(store => store.categories.categories)
+    let products = useSelector((store) => store.products.products);
+    let [text1,setText1] = useState(useSelector(store => store.text.text))
+    let [page,setPage] = useState(1)
+    let [token,setToken] = useState('')
     const [cart, setCart] = useState([]);
-    const products = useSelector(store => store.products.products);
-    console.log(products)
+    const route = useRoute();
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
+    useFocusEffect(React.useCallback(() => {
+        async function getData() {
+            try {
+                const value = await AsyncStorage.getItem('token');
+                let headers = { headers: { 'Authorization': `Bearer ${token}` } }
+                dispatch(read_products({ token: value, page: page, inputText: text, categories: categories, headers }));
+                setToken(value)
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getData();
+    }, [cart, route.params]));
+    
 
-    useEffect(() => {
-        dispatch(read_products({ products }));
-    }, [reload]);
+        function handleViewCart(e, id) {
+        dispatch(productsPagination({state: true}))
+        setTimeout( () => {
+            navigation.navigate('Shopping-cart',{productId: id});
+        }, 100)
+    }
+
     const handleBuyProduct = (_id) => {
         // Buscar el producto por ID
         const productToBuy = products.find(product => product._id === _id);
@@ -32,13 +59,17 @@ function CardProducts() {
         setCart([...cart, productToBuy]);
 
         console.log(`Añadido al carrito: ${productToBuy.name}`);
+
+        // navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
     };
 
     return (
         <ScrollView>
             <View style={styles.container}>
-                {products.map((product) => (
-                    <View style={styles.card} key={product._id}>
+                {
+                    products ? ( products.length ? (products.map((product, i) => {
+                        return (
+                            <View style={styles.card} key={product._id}>
                         <Image style={styles.cardImage} source={{ uri: product.image }} />
                         <View style={styles.cardContent}>
                             <Text style={styles.cardTitle}>{product.name}</Text>
@@ -52,14 +83,39 @@ function CardProducts() {
                             </TouchableOpacity>
                         </View>
                     </View>
-                ))}
+                        )
+                    })
+                    ): (
+                    <Text>No products found </Text>
+                    )
+                    ) : (
+                        <View/>
+                    )}
+                    <View style={styles.pageBtns}>
+                {
+                    page === 1 ? <></> :
+                        <TouchableOpacity style={styles.btns} onPress={() => {setPage(page-1)}}>
+                            <Text style={styles.btnsText}>Prev</Text>
+                        </TouchableOpacity>
+                }
+                {
+                    products.length == 6 || products.length == 10 ?
+                        <TouchableOpacity style={styles.btns} onPress={() => {setPage(page+1)}}>
+                            <Text style={styles.btnsText}>Next</Text>
+                        </TouchableOpacity> : <></>
+                }
+
             </View>
-            <TouchableOpacity
-                style={styles.viewCartButton}
-                onPress={() => navigation.navigate('Cart', { cart })}
-            >
-                <Text style={styles.viewCartButtonText}>Ver carrito ({cart.length})</Text>
-            </TouchableOpacity>
+
+            </View>
+                <View>
+                    <TouchableOpacity
+                    style={styles.viewCartButton}
+                    onPress={(event) => handleViewCart(event, handleBuyProduct)}>
+                    <Text style={styles.viewCartButtonText}>Ver carrito ({cart.length})</Text>
+                    </TouchableOpacity>
+                </View>
+           
         </ScrollView>
     );
 }
@@ -115,6 +171,28 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+    pageBtns:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'center',
+        alignItems: "center",
+        gap: 10,
+        width: 70,
+        height: 30
+
+    },
+    btns: {
+        backgroundColor: "#2e8b57",
+        borderRadius: 16,
+        width: 60,
+        height: 30,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    btnsText:{
+        color: "white",
+        fontSize: 16
+    }
 });
 
 export default CardProducts;

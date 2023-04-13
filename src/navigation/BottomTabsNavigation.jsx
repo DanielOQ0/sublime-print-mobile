@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Index from "../screens/Index";
 import Form from "../screens/Form";
-import ProductCart  from "../screens/ProductScreen";
+import ProductScreen  from "../screens/ProductScreen";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/core";
@@ -17,21 +17,23 @@ const Tab = createBottomTabNavigator()
 
 function BottomTabsNavigation() {
   let [token, setToken] = useState("")
-  let state = useSelector((store) => store.tabsReducer.state)
+  let state = useSelector(store => store.tabsReducer.state)
+  let productClicked = useSelector(store => store.productsPagination.state)
 
-  useFocusEffect(React.useCallback(() => {
-    async function getData() {
-      try {
-        const value = await AsyncStorage.getItem("token")
-        setToken(value)
-      } catch (error) {
-        console.log(error)
-      }
+  useFocusEffect(React.useCallback(() =>{
+    async function getData(){
+        try{
+            const value = await AsyncStorage.getItem("token")
+            setToken(value)
+        } catch(error) {
+            console.log(error)
+        }
     }
     getData()
-  }, [state]))
+}, [state, productClicked]))
 
   return (
+    
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
@@ -54,58 +56,65 @@ function BottomTabsNavigation() {
           paddingTop: 0,
           paddingBottom: 0,
         },
-      }}>
-      <Tab.Screen name="Home"
+      }}
+     >
+      <Tab.Screen
+        name="Home"
         options={{
           headerShown: false,
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="home" size={size} color={color} />
           ),
-        }} component={Index} initialParams={{ state: "Register" }} />
+        }}component={Index} initialParams={{ state: "Register" }}/>
       {token ? <></>
-        :
-        <>
-          <Tab.Screen name="Register"
-            options={{
-              headerShown: false,
-              tabBarLabel: 'Register',
-              tabBarIcon: ({ color }) => (
-                <FontAwesome name="user-circle" size={24} color={color} />
-              ),
-            }} component={Form} initialParams={{ state: 'Register' }} />
-
-          <Tab.Screen name="LogIn" options={{
-            headerShown: false,
-            tabBarLabel: "LogIn",
-            tabBarIcon: ({ color }) => (
-              <AntDesign name="login" size={24} color={color} />
+      : 
+      <>
+        <Tab.Screen
+          name="Register" 
+          options={{
+          headerShown: false,
+          tabBarLabel: 'Register',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="user-circle" size={24} color={color} />
             ),
-          }} component={Form} initialParams={{ state: 'Login' }} />
-        </>
-      }
-      {token ? <Tab.Screen options={{
-        headerShown: false,
-        tabBarIcon: ({ color }) => (
-          <MaterialIcons name="storefront" size={24} color={color} />
-        ),
-      }} name="store" component={store} /> : <></>}
-      {token ? <Tab.Screen options={{
-        headerShown: false,
-        tabBarIcon: ({ color }) => (
-          <MaterialIcons name="shopping-cart" size={24} color={color} />
-        ),
-
-      }} name="shopping-cart"  component={ProductCart} /> : <></>}
-      {token ? <Tab.Screen options={{
-        headerShown: false,
-        tabBarLabel: "LogOut",
-        tabBarIcon: ({ color }) => (
-          <AntDesign name="logout" size={24} color={color} />
-        ),
-      }} name='LogOut' component={Logout} /> : <></>}
+            }}component={Form} initialParams={{ state: 'Register' }}/>
+        
+        <Tab.Screen
+          name="LogIn"
+          options={{
+          headerShown: false,
+          tabBarLabel: "LogIn",
+          tabBarIcon: ({ color }) => (
+          <AntDesign name="login" size={24} color={color} />
+            ),
+            }}component={Form} initialParams={{ state: 'Login' }}/>  
+          </>
+          }   
+          {token ? <Tab.Screen
+              options={{
+              headerShown: false,
+              tabBarIcon: ({ color }) => (
+                <MaterialIcons name="storefront" size={24} color={color} />
+              ),
+            }} name="Store"component={store}/> : <></>}
+           {token && productClicked ? <Tab.Screen
+              options={{
+              headerShown: false,
+              tabBarIcon: ({ color }) => (
+                <MaterialIcons name="shopping-cart" size={24} color={color} />
+              ),
+            }}name="Shopping-cart" component={ProductScreen}/> : <></>}
+          {token ? <Tab.Screen
+              options={{
+              headerShown: false,
+              tabBarLabel: "LogOut",
+              tabBarIcon: ({ color }) => (
+                <AntDesign name="logout" size={24} color={color} />
+              ),
+            }} name='LogOut' component={Logout}/> : <></>}
     </Tab.Navigator>
-  )
+  );
 }
 
 export default BottomTabsNavigation
