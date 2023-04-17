@@ -7,7 +7,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-const { read_products } = actions;
+const { read_products } = productsActions;
+const { productsPagination } = productsClickActions
 
 function CardsProducts() {
     const route = useRoute();

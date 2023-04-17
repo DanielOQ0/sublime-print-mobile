@@ -1,12 +1,11 @@
 import React from 'react'
-import { Text, View, Image, Button } from 'react-native'
+import { Text, View, TouchableOpacity, Button} from 'react-native'
 import { StyleSheet } from 'react-native'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import categoriesActions from '../store/Categories/actions'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import { TouchableOpacity } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -15,6 +14,9 @@ let categoriesCheck = []
 function SearchCategories() {
     const [categories, setCategories] = useState(false)
     const { captureCheck } = categoriesActions
+    const [filters, setFilters] = useState([]);
+    let token = AsyncStorage.getItem("token")
+    let headers = { headers: { Authorization: `Bearer ${token}` } };
     const dispatch = useDispatch()
 
     let checkedCategories = useSelector(store => store.categories.categories)
@@ -48,6 +50,28 @@ function SearchCategories() {
             }
         })
     }
+    useEffect(() => {
+        const fetchCategories = async () => {
+          try {
+            const response = await axios.get('http://subime-print-fgbog.ondigitalocean.app/api/categories', headers);
+            const categories = response.data.Categories;
+            const cat = {
+              id: 'category',
+              name: 'Category',
+              options: categories.map((category) => ({
+                value: category._id,
+                label: category.name,
+                checked: false,
+              })),
+            };
+            setFilters([cat]);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+    
+        fetchCategories();
+      }, []);
 
     return (
         <View style={styles.categoriesType}>
