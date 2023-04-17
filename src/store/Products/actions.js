@@ -5,7 +5,7 @@ const read_products = createAsyncThunk(
   'read_products',
    async ({page, inputText, categories, order, headers}) => {
   try {
-    const response = await axios.get("https://subime-print-fgbog.ondigitalocean.app/api/products/?page="+page+"&name="+inputText.trim()+"&category="+categories+"&order="+order, headers);
+    const response = await axios.get("https://subime-print-fgbog.ondigitalocean.app/api/products/?page="+page+"&title="+inputText.trim()+"&category="+categories+"&order="+order, headers);
     return {
       products: response.data.products,
     };

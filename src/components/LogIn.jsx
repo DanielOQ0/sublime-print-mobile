@@ -45,7 +45,8 @@ export default function LogIn() {
                 email: res.data.user.email,
                 phone: res.data.user.phone,
                 photo: res.data.user.photo,
-                admin
+                admin,
+                author
               }))
               dispatch(reloadTabs({ state: !state }))
               dispatch(productsClicked({ state: false }))
@@ -109,10 +110,10 @@ const styles = StyleSheet.create({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: "white",
           gap: 10,
           width: "100%",
           height: "100%",
-          marginTop: 50
         },
         fieldset: {
           display: "flex",
