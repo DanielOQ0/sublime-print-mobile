@@ -5,7 +5,7 @@ import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const { read_products } = actions;
 
@@ -68,7 +68,7 @@ function CardsProducts() {
                 <TouchableOpacity
                     style={styles.viewCartButton}
                     onPress={() => navigation.navigate('shopping-cart', { cart })}>
-                    <Text style={styles.viewCartButtonText}><MaterialIcons name="shopping-cart" size={40} color={"green"} /> ({cart.length})</Text>
+                    <Text style={styles.viewCartButtonText}><FontAwesome5 name="shopping-bag" size={24} color="black" /> ({cart.length})</Text>
                 </TouchableOpacity>
             )
         })
@@ -89,7 +89,7 @@ function CardsProducts() {
                                         style={styles.buyButton}
                                         onPress={() => handleBuyProduct(product._id)}
                                     >
-                                        <Text style={styles.buyButtonText}>Buy</Text>
+                                        <Text style={styles.buyButtonText}>Add to bag</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
