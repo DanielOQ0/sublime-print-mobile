@@ -46,7 +46,6 @@ export default function LogIn() {
                 phone: res.data.user.phone,
                 photo: res.data.user.photo,
                 admin,
-                author
               }))
               dispatch(reloadTabs({ state: !state }))
               dispatch(productsClicked({ state: false }))
