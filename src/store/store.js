@@ -6,9 +6,11 @@ import categoriesReducer from './Categories/reducer'
 import productsReducer from "./Products/reducer"
 import detailsReducer from "./Details/reducer"
 import cartReducer from "./Cart/cartReducer"
+import productsClickReducer from './ProductsPagination/reducer'
 import sortReducer from './Sort/reducer'
 
-export const store = configureStore({
+const store = configureStore({
+
     reducer: {
         tabsReducer: tabsReducer,
         userReducer: userReducer,
@@ -17,6 +19,7 @@ export const store = configureStore({
         products: productsReducer,
         details: detailsReducer,
         cart: cartReducer,
+        productsPagination: productsClickReducer,
         order: sortReducer
     }, 
 
