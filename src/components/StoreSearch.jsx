@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     titleText: {
         color: "black",
         fontSize: 50,
-        marginTop:30
     },
     search: {
       display: "flex",

@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Index from "../screens/Index";
 import Form from "../screens/Form";
-import ProductScreen  from "../screens/ProductScreen";
+import Cart from '../components/Cart'
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/core";
@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import store from "../screens/Store"
 import { MaterialIcons } from "@expo/vector-icons";
 import Logout from "../screens/Logout";
+import CardsProducts from "../components/CardsProducts";
 
 const Tab = createBottomTabNavigator()
 
@@ -20,14 +21,16 @@ function BottomTabsNavigation() {
   let state = useSelector(store => store.tabsReducer.state)
   let productClicked = useSelector(store => store.productsPagination.state)
 
-  useFocusEffect(React.useCallback(() =>{
-    async function getData(){
-        try{
-            const value = await AsyncStorage.getItem("token")
-            setToken(value)
-        } catch(error) {
-            console.log(error)
-        }
+  useFocusEffect(React.useCallback(() => {
+    async function getData() {
+      try {
+        await AsyncStorage.clear();
+        const value = await AsyncStorage.getItem("token")
+        await AsyncStorage.removeItem('token');
+        setToken(value)
+      } catch (error) {
+        console.log(error)
+      }
     }
     getData()
 }, [state, productClicked]))
@@ -36,7 +39,6 @@ function BottomTabsNavigation() {
     
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
         tabBarStyle: {
           backgroundColor: "white",
           borderTopColor: "transparent",

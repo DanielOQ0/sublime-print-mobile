@@ -7,6 +7,7 @@ import productsReducer from "./Products/reducer"
 import detailsReducer from "./Details/reducer"
 import cartReducer from "./Cart/cartReducer"
 import productsClickReducer from './ProductsPagination/reducer'
+import sortReducer from './Sort/reducer'
 
 const store = configureStore({
 
@@ -18,10 +19,10 @@ const store = configureStore({
         products: productsReducer,
         details: detailsReducer,
         cart: cartReducer,
-        productsPagination: productsClickReducer
+        productsPagination: productsClickReducer,
+        order: sortReducer
     }, 
 
 })
 
 export default store
-
