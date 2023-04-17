@@ -11,8 +11,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import store from "../screens/Store"
 import { MaterialIcons } from "@expo/vector-icons";
-import Logout from "../screens/Logout";
-import CardsProducts from "../components/CardsProducts";
+import Profile from "../screens/Profile";
 
 const Tab = createBottomTabNavigator()
 
@@ -93,17 +92,19 @@ function BottomTabsNavigation() {
               ),
             }}
           />
-          <Tab.Screen
-            name='LogOut'
-            component={Logout}
-            options={{
-              headerShown: false,
-              tabBarLabel: "LogOut",
-              tabBarIcon: ({ color }) => (
-                <AntDesign name="logout" size={24} color={color} />
-              ),
-            }}
-          />
+          <Tab.Screen name="Perfil" options={{
+            headerShown: false,
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name="user" size={24} color={color} />
+            ),
+          }}>
+            {() => (
+              <>
+                <Profile />
+              </>
+            )}
+          </Tab.Screen>
         </>
       ) : (
         <>

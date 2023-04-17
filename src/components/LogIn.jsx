@@ -43,8 +43,8 @@ export default function LogIn() {
                 id: res.data.user._id,
                 name: res.data.user.name,
                 email: res.data.user.email,
-                // phone: res.data.user.phone,
-                // photo: res.data.user.photo,
+                phone: res.data.user.phone,
+                photo: res.data.user.photo,
                 admin,
                 author
               }))
@@ -109,10 +109,10 @@ const styles = StyleSheet.create({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: "white",
           gap: 10,
           width: "100%",
           height: "100%",
-          marginTop: 50
         },
         fieldset: {
           display: "flex",

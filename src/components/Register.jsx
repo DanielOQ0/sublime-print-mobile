@@ -23,8 +23,8 @@ export default function Register() {
     let data = {
       name: name,
       email: email,
-      // phone: phone,
-      // photo: photo,
+      //phone: phone,
+      photo: photo,
       password: password
     }
     console.log(data);
@@ -41,7 +41,7 @@ export default function Register() {
       setTimeout(() => {
         setLoading(false)
       }, 3000)
-      navigation.navigate('Home')
+      navigation.navigate('LogIn')
       Alert.alert(
         'Welcome to Sublime Prints!',
         'Account created successfully'
