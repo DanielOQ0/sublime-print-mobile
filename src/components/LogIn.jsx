@@ -10,8 +10,10 @@ import { useSelector } from 'react-redux';
 import tabsActions from '../store/ReloadTabs/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { AntDesign } from '@expo/vector-icons';
+import productsClickActions from '../store/ProductsPagination/actions';
 
 const { reloadTabs } = tabsActions
+const { productsClicked } = productsClickActions
 
 export default function LogIn() {
     const navigation= useNavigation()
@@ -19,7 +21,7 @@ export default function LogIn() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    let state = useSelector((store) => store.tabsReducer.state)
+    let state = useSelector(store => store.tabsReducer.state)
     let dispatch = useDispatch()
 
     async function handleSubmit() {
@@ -33,22 +35,20 @@ export default function LogIn() {
         
         let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signin/'
         let admin
-        let author
         try {
             await axios.post(url, data).then(res =>{
               res.data.user.is_admin ? (admin = true) : (admin = false)
-              res.data.user.is_author ? (author = true) : (author = false)
               AsyncStorage.setItem("token", res.data.token)
               AsyncStorage.setItem("user",JSON.stringify({
                 id: res.data.user._id,
                 name: res.data.user.name,
                 email: res.data.user.email,
-                // phone: res.data.user.phone,
-                // photo: res.data.user.photo,
-                admin,
-                author
+                phone: res.data.user.phone,
+                photo: res.data.user.photo,
+                admin
               }))
               dispatch(reloadTabs({ state: !state }))
+              dispatch(productsClicked({ state: false }))
               setLoading(false)
               setTimeout(() => navigation.navigate("Home"), 1000)
             })
