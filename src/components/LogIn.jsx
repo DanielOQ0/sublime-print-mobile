@@ -33,7 +33,7 @@ export default function LogIn() {
         }
         console.log(data);
         
-        let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signin/'
+        let url = 'https://subime-print-fgbog.ondigitalocean.app/api/users/signin'
         let admin
         try {
             await axios.post(url, data).then(res =>{

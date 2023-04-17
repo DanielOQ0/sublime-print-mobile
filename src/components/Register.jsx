@@ -23,8 +23,8 @@ export default function Register() {
     let data = {
       name: name,
       email: email,
-      phone: phone,
-      photo: photo,
+      //phone: phone,
+      //photo: photo,
       password: password
     }
     console.log(data);

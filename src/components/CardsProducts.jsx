@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import actions from "../store/Products/actions.js";
+import productsActions from "../store/Products/actions.js";
+import productsClickActions from "../store/ProductsPagination/actions.js";
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
