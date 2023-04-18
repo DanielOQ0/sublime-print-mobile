@@ -6,27 +6,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import statusActions from '../store/StatusCart/actions.js'
+import Toast from 'react-native-toast-message';
 
 const { read_products } = actions;
+const { captureStatus} = statusActions;
 
 function CardsProducts() {
     const route = useRoute();
     const [cart, setCart] = useState([]);
-    let [text1,setText1] = useState(useSelector(store => store.text.text))
-    let [page,setPage] = useState(1)
-    let categories = useSelector(store => store.categories.categories)
-    let text = useSelector(store => store.text.text)
-    let order = useSelector(store => store.order.order)
+    const [text1, setText1] = useState(useSelector(store => store.text.text));
+    const [page, setPage] = useState(1);
+    const categories = useSelector(store => store.categories.categories);
+    const text = useSelector(store => store.text.text);
+    const order = useSelector(store => store.order.order);
     const products = useSelector(store => store.products.products);
     const [token, setToken] = useState();
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const [reload, setReload] = useState(false);    
+    const [reloadCart, setReloadCart] =useState(false)
 
     useFocusEffect(React.useCallback(() => {
         async function getData() {
             try {
                 const value = await AsyncStorage.getItem('token');
-                dispatch(read_products({ token: value }));
+                dispatch(read_products({ products:products, token: value }));
                 setToken(value)
             } catch (error) {
                 console.log(error);
@@ -36,43 +41,61 @@ function CardsProducts() {
     }, [cart, route.params]));
 
     function getProducts(token) {
-        let headers = { headers: { 'Authorization': `Bearer ${token}` } }
+        let headers = { 'Authorization': `Bearer ${token}` };
         dispatch(read_products({ page: page, inputText: text, categories: categories, order: order, headers }))
     }
-    useEffect( () => {
-        setText1(text)
-        getProducts(token)
+    
+    useEffect(() => {
+        setText1(text);
+        getProducts(token);
     }, [page, text, categories, order, token]);
 
     const handleBuyProduct = (_id) => {
-        // Buscar el producto por ID
+        // Buscar el producto por ID;
         const productToBuy = products.find(product => product._id === _id);
-
+    
         // Validar que el producto exista
         if (!productToBuy) {
             console.log(`No se encontró el producto con ID ${_id}`);
             return;
         }
-
+    
+        // Verificar si el producto ya está en el carrito
+        if (cart.find(item => item._id === productToBuy._id)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Product already in cart',
+                visibilityTime: 2000,
+            });
+            return;
+        }
+    
         // Agregar el producto al carrito
         setCart(prevCart => [...prevCart, productToBuy]);
-
+        setReloadCart(!reloadCart);
+    
         console.log(`Añadido al carrito: ${productToBuy.name}`);
-
-        // navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
+        console.log(productToBuy)
+    
+        // Navegar al carrito de compras
+        navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
+    
+        // Mostrar mensaje Toast si el producto fue añadido al carrito
+        Toast.show({
+            type: 'success',
+            text1: 'Product added to cart',
+            visibilityTime: 2000,
+        });
     }
-    useEffect(() =>{
-        navigation.setOptions({
-            headerLargeTitle: true,
-            headerRight: () =>(
-                <TouchableOpacity
-                    style={styles.viewCartButton}
-                    onPress={() => navigation.navigate('shopping-cart', { cart })}>
-                    <Text style={styles.viewCartButtonText}><MaterialIcons name="shopping-cart" size={40} color={"green"} /> ({cart.length})</Text>
-                </TouchableOpacity>
-            )
-        })
-    }, [navigation])
+    
+    useEffect(() => {
+        dispatch(captureStatus({ inputStatus: reloadCart }))
+
+    }, [reloadCart])
+    // console.log(useSelector(store => store.Status.Status))
+    
+
+
     return (
         <ScrollView>
             <View style={styles.container}>
@@ -89,7 +112,7 @@ function CardsProducts() {
                                         style={styles.buyButton}
                                         onPress={() => handleBuyProduct(product._id)}
                                     >
-                                        <Text style={styles.buyButtonText}>Buy</Text>
+                                        <Text style={styles.buyButtonText}>Add to Bag</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
