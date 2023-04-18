@@ -36,7 +36,7 @@ export default function Perfil() {
     }
     const styles = StyleSheet.create ({
         viewPrincipal: {
-            height: "80%",
+            height: "70%",
             width: "100%",
             display: "flex",
             alignItems: "center",

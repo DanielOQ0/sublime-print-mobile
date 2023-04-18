@@ -1,21 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import actions from "../store/Products/actions.js";
+import axios from 'axios'
+import { StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Linking } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from "react-redux";
 
-import { read_products, remove_product, buy_product } from "../store/Products/actions";
+const { read_products } = actions;
 
-const Cart = () => {
-    const [cart, setCart] = useState([]);
-    const route = useRoute();
+function Cart({ route }) {
+    const { cart } = route.params;
+    const [carrito, setCarrito] = useState(cart || []);
+    const [totalPrice, setTotalPrice] = useState(
+        () => cart.reduce((total, product) => total + product.price, 0)
+    );
+    const navigation = useNavigation();
     const dispatch = useDispatch();
+    const products = useSelector((store) => store.products.products);
     const [token, setToken] = useState();
-    const products = useSelector(store => store.products.products);
+    const [cartUpdated, setCartUpdated] = useState();
+    const reload = useSelector((store) => store.Status.Status);
+    const summary = useSelector((store) => store.price);
+
+    useEffect(() => {
+        const newTotalPrice = cart.reduce((total, product) => total + product.price, 0);
+        setTotalPrice(newTotalPrice);
+    }, [reload]);
 
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
             async function getData() {
                 try {
                     const value = await AsyncStorage.getItem('token');
@@ -26,80 +42,157 @@ const Cart = () => {
                 }
             }
             getData();
-        }, [route.params])
+        }, [cart, cartUpdated])
     );
 
-    const handleRemoveProduct = (id) => {
-        dispatch(remove_product({ productId: id, token }));
-    };
-
-    const handleBuyProduct = async (id) => {
+    async function getData() {
         try {
             const value = await AsyncStorage.getItem('token');
-            dispatch(buy_product({ token: value, productId: id }));
+            dispatch(read_products({ token: value }));
+            setToken(value);
         } catch (error) {
             console.log(error);
         }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            getData();
+            setCartUpdated(cartUpdated);
+        }, [reload])
+    );
+
+    useEffect(() => {
+        getData();
+    }, [cart, cartUpdated]);
+
+    const removeFromCart = (product) => {
+        const newCart = cart.filter((item) => item._id !== product._id);
+        setCarrito(newCart);
+        setTotalPrice((prevPrice) => prevPrice - product.price);
+        setCartUpdated(!cartUpdated);
     };
 
     useEffect(() => {
-        setCart(products.filter(product => product.inCart));
-    }, [products]);
+        setTotalPrice(cart.reduce((total, product) => total + product.price, 0));
+    }, [cart, reload]);
+    
+    const handleBuy = () => {
+        alert('¡Gracias por tu compra!');
+        setCarrito([]);
+    };
+
+    // async function handleBuy(){
+    //     const productsIds = products.map((e) => e._id);
+    //     const productsNames = products.map((e) => e.name);
+    //     const headers = { headers: { Authorization: `Bearer ${token}` } };
+    //     const url = "https://subime-print-fgbog.ondigitalocean.app/api/payments"
+    //     const payments = {
+    //         id: productsIds.join(),
+    //         name: productsNames.join(),
+    //         currency_id: 'ARS',
+    //         price: totalPrice.price,
+    //         quantity: 10,
+    //     };
+
+    //     if(token){
+    //         try{
+    //             const response = await axios.post(url,payments,headers)
+    //             const puedeAbrir = await Linking.canOpenURL(response.data.response.body.init_point);
+    //             if (puedeAbrir) {
+    //               await Linking.openURL(response.data.response.body.init_point);
+    //             }
+    //         }catch(error){
+    //             console.log(error)
+    //         }
+    //     }
+    // };
+
+
     return (
-        <View>
-            <Text style={styles.title}>Carrito de compras</Text>
-            <ScrollView>
-                {cart.map(product => (
-                    <TouchableOpacity key={product._id}>
-                        <View style={styles.producto}>
-                            <Image source={{ uri: product.imagen }} style={styles.imagen} />
-                            <View style={styles.detalles}>
-                                <Text style={styles.nombre}>{product.nombre}</Text>
-                                <Text style={styles.precio}>${product.precio}</Text>
-                                <Button title="Remove" onPress={() => handleRemoveProduct(product._id)} />
-                                <Button title="Comprar" onPress={() => handleBuyProduct(product._id)} />
-                            </View>
+        <ScrollView>
+            <View style={styles.container}>
+                {cart.map((product) => (
+                    <View style={styles.card} key={product._id}>
+                        <Image style={styles.cardImage} source={{ uri: product.image }} />
+                        <View style={styles.cardContent}>
+                            <Text style={styles.cardTitle}>{product.name}</Text>
+                            <Text style={styles.cardPrice}>${product.price}</Text>
+                            <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(product)}>
+                                <Text style={styles.removeButtonText}>Eliminar</Text>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
+                    </View>
                 ))}
-            </ScrollView>
-        </View>
+                <View style={styles.checkoutContainer}>
+                    <Text>Total: ${totalPrice}</Text>
+                    <TouchableOpacity style={styles.buyButton} onPress={handleBuy}>
+                        <Text style={styles.buyButtonText}>Comprar</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </ScrollView>
     );
 }
 
+
+
+
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginVertical: 16,
-        marginLeft: 16
+    container: {
+        backgroundColor: '#f8f8f8',
+        display: 'flex',
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+        paddingTop: 200,
     },
-    producto: {
-        flexDirection: "row",
-        marginVertical: 8,
-        marginHorizontal: 16,
-        backgroundColor: "#fff",
+    card: {
+        flexDirection: 'row',
         borderRadius: 8,
-        padding: 8
+        backgroundColor: '#ffffff',
+        marginBottom: 16,
+        overflow: 'hidden',
     },
-    imagen: {
-        width: 80,
-        height: 80,
-        marginRight: 8,
-        borderRadius: 4
+    cardImage: {
+        width: 120,
+        height: 120,
     },
-    detalles: {
+    cardContent: {
         flex: 1,
-        justifyContent: "center"
+        padding: 8,
     },
-    nombre: {
+    cardTitle: {
         fontSize: 16,
-        fontWeight: "bold"
+        fontWeight: 'bold',
+        marginBottom: 8,
     },
-    precio: {
+    cardPrice: {
         fontSize: 14,
-        color: "#777"
-    }
+        color: '#666666',
+        marginBottom: 8,
+    },
+    removeButton: {
+        backgroundColor: '#ff4d4d',
+        borderRadius: 8,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        alignSelf: 'flex-start',
+    },
+    removeButtonText: {
+        color: '#ffffff',
+        fontSize: 12,
+    },
+    checkoutContainer: {
+        marginTop: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    buyButtonText: {color: "green",
+    fontSize: 16,
+    fontWeight: "bold",
+marginLeft: 20}
 });
 
 export default Cart;

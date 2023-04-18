@@ -67,6 +67,20 @@ function Logout() {
     <View>
       <View style={styles.viewLogout}>
         <TouchableOpacity style={styles.btnlogout} >
+          <Text style={styles.textlogout}>Adresses</Text>
+          <Text><AntDesign name="home" size={24} color="white" /></Text>
+          <Spinner visible={loading} textContent={'Loading...'} textStyle={{ color: '#FFF' }} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.viewLogout}>
+        <TouchableOpacity style={styles.btnlogout} >
+          <Text style={styles.textlogout}>Orders</Text>
+          <Text><AntDesign name="gift" size={24} color="white" /></Text>
+          <Spinner visible={loading} textContent={'Loading...'} textStyle={{ color: '#FFF' }} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.viewLogout}>
+        <TouchableOpacity style={styles.btnlogout} >
           <Text style={styles.textlogout}>Edit</Text>
           <Text><FontAwesome5 name="user-edit" size={20} color="white" /></Text>
           <Spinner visible={loading} textContent={'Loading...'} textStyle={{ color: '#FFF' }} />
@@ -92,7 +106,7 @@ const styles = StyleSheet.create({
   },
   btnlogout: {
     backgroundColor: "#00b2a5",
-    width: 150,
+    width: 200,
     padding: 10,
     display: "flex",
     flexDirection: "row",

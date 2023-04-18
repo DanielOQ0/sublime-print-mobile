@@ -8,6 +8,7 @@ import detailsReducer from "./Details/reducer"
 import cartReducer from "./Cart/cartReducer"
 import productsClickReducer from './ProductsPagination/reducer'
 import sortReducer from './Sort/reducer'
+import statusReducer from './StatusCart/reducer'
 
 const store = configureStore({
 
@@ -20,7 +21,8 @@ const store = configureStore({
         details: detailsReducer,
         cart: cartReducer,
         productsPagination: productsClickReducer,
-        order: sortReducer
+        order: sortReducer,
+        Status: statusReducer,
     }, 
 
 })

@@ -7,9 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import statusActions from '../store/StatusCart/actions.js'
+import Toast from 'react-native-toast-message'
 
 const { read_products } = productsActions;
 const { productsPagination } = productsClickActions
+const { captureStatus} = statusActions;
 
 function CardsProducts() {
     const route = useRoute();
@@ -23,6 +26,8 @@ function CardsProducts() {
     const [token, setToken] = useState();
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const [reload, setReload] = useState(false);
+    const [reloadCart, setReloadCart] = useState(false)
 
     useFocusEffect(React.useCallback(() => {
         async function getData() {
@@ -47,7 +52,7 @@ function CardsProducts() {
     }, [page, text, categories, order, token]);
 
     const handleBuyProduct = (_id) => {
-        // Buscar el producto por ID
+        // Buscar el producto por ID;
         const productToBuy = products.find(product => product._id === _id);
 
         // Validar que el producto exista
@@ -56,13 +61,39 @@ function CardsProducts() {
             return;
         }
 
+        // Verificar si el producto ya está en el carrito
+        if (cart.find(item => item._id === productToBuy._id)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Product already in cart',
+                visibilityTime: 2000,
+            });
+            return;
+        }
+
         // Agregar el producto al carrito
         setCart(prevCart => [...prevCart, productToBuy]);
+        setReloadCart(!reloadCart);
 
         console.log(`Añadido al carrito: ${productToBuy.name}`);
+        console.log(productToBuy)
 
-        // navigation.navigate('Bag', { cart: [...cart, productToBuy] });
+        // Navegar al carrito de compras
+        navigation.navigate('Bag', { cart: [...cart, productToBuy] });
+
+        // Mostrar mensaje Toast si el producto fue añadido al carrito
+        Toast.show({
+            type: 'success',
+            text1: 'Product added to cart',
+            visibilityTime: 2000,
+        });
     }
+
+    useEffect(() => {
+        dispatch(captureStatus({ inputStatus: reloadCart }))
+
+    }, [reloadCart])
+    // console.log(useSelector(store => store.Status.Status))
     useEffect(() =>{
         navigation.setOptions({
             headerLargeTitle: true,
