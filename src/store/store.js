@@ -9,7 +9,8 @@ import statusReducer from './StatusCart/reducer'
 import checkoutMP from "./CheckoutMP/reducer"
 import priceReducer from './ChangePrice/reducer'
 
-export const store = configureStore({
+const store = configureStore({
+
     reducer: {
         tabsReducer: tabsReducer,
         userReducer: userReducer,
@@ -25,4 +26,3 @@ export const store = configureStore({
 })
 
 export default store
-

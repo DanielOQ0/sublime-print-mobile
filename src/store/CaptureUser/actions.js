@@ -1,9 +1,10 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {  createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-let captureUser =createAsyncThunk("captureUser",
+let captureUser = createAsyncThunk("captureUser",
 async()=>{
-    let token = localStorage.getItem("token");
+    let token = AsyncStorage.getItem("token");
     let headers = { headers: { Authorization: `Bearer ${token}` } };
     let url = "https://subime-print-fgbog.ondigitalocean.app/api/users/";
     try {

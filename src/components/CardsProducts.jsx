@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import actions from "../store/Products/actions.js";
+import productsActions from "../store/Products/actions.js";
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import statusActions from '../store/StatusCart/actions.js'
-import Toast from 'react-native-toast-message';
+import { FontAwesome5 } from "@expo/vector-icons";
 
-const { read_products } = actions;
-const { captureStatus} = statusActions;
+const { read_products } = productsActions;
+
 
 function CardsProducts() {
     const route = useRoute();
@@ -24,14 +22,14 @@ function CardsProducts() {
     const [token, setToken] = useState();
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const [reload, setReload] = useState(false);    
-    const [reloadCart, setReloadCart] =useState(false)
+    const [reload, setReload] = useState(false);
+    const [reloadCart, setReloadCart] = useState(false)
 
     useFocusEffect(React.useCallback(() => {
         async function getData() {
             try {
                 const value = await AsyncStorage.getItem('token');
-                dispatch(read_products({ products:products, token: value }));
+                dispatch(read_products({ products: products, token: value }));
                 setToken(value)
             } catch (error) {
                 console.log(error);
@@ -44,7 +42,7 @@ function CardsProducts() {
         let headers = { 'Authorization': `Bearer ${token}` };
         dispatch(read_products({ page: page, inputText: text, categories: categories, order: order, headers }))
     }
-    
+
     useEffect(() => {
         setText1(text);
         getProducts(token);
@@ -53,13 +51,13 @@ function CardsProducts() {
     const handleBuyProduct = (_id) => {
         // Buscar el producto por ID;
         const productToBuy = products.find(product => product._id === _id);
-    
+
         // Validar que el producto exista
         if (!productToBuy) {
             console.log(`No se encontró el producto con ID ${_id}`);
             return;
         }
-    
+
         // Verificar si el producto ya está en el carrito
         if (cart.find(item => item._id === productToBuy._id)) {
             Toast.show({
@@ -69,17 +67,17 @@ function CardsProducts() {
             });
             return;
         }
-    
+
         // Agregar el producto al carrito
         setCart(prevCart => [...prevCart, productToBuy]);
         setReloadCart(!reloadCart);
-    
+
         console.log(`Añadido al carrito: ${productToBuy.name}`);
         console.log(productToBuy)
-    
+
         // Navegar al carrito de compras
         navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
-    
+
         // Mostrar mensaje Toast si el producto fue añadido al carrito
         Toast.show({
             type: 'success',
@@ -87,20 +85,20 @@ function CardsProducts() {
             visibilityTime: 2000,
         });
     }
-    
+
     useEffect(() => {
         dispatch(captureStatus({ inputStatus: reloadCart }))
 
     }, [reloadCart])
     // console.log(useSelector(store => store.Status.Status))
-    
+
 
 
     return (
         <ScrollView>
             <View style={styles.container}>
                 {
-                    products ? (products.length ? (products.map((product, i) =>{
+                    products ? (products.length ? (products.map((product, i) => {
                         return (
                             <View style={styles.card} key={i}>
                                 <Image style={styles.cardImage} source={{ uri: product.image }} />
@@ -122,24 +120,24 @@ function CardsProducts() {
                         <Text> No products found</Text>
                     )
                     ) : (
-                        <View/>
+                        <View />
                     )}
             </View>
-                     <View style={styles.pageBtns}>
-                        {
-                        page === 1 ? <></> :
-                            <TouchableOpacity style={styles.btns} onPress={() => {setPage(page-1)}}>
-                                <Text style={styles.btnsText}>Prev</Text>
-                            </TouchableOpacity>
-                        }
-                        {
-                        products.length == 6 || products.length == 10 ?
-                            <TouchableOpacity style={styles.btns} onPress={() => {setPage(page+1)}}>
-                                <Text style={styles.btnsText}>Next</Text>
-                            </TouchableOpacity> : <></>
-                        }
-                    </View>
-            
+            <View style={styles.pageBtns}>
+                {
+                    page === 1 ? <></> :
+                        <TouchableOpacity style={styles.btns} onPress={() => { setPage(page - 1) }}>
+                            <Text style={styles.btnsText}>Prev</Text>
+                        </TouchableOpacity>
+                }
+                {
+                    products.length == 6 || products.length == 10 ?
+                        <TouchableOpacity style={styles.btns} onPress={() => { setPage(page + 1) }}>
+                            <Text style={styles.btnsText}>Next</Text>
+                        </TouchableOpacity> : <></>
+                }
+            </View>
+
         </ScrollView>
     );
 }
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
-    pageBtns:{
+    pageBtns: {
         display: "flex",
         flexDirection: "row",
         justifyContent: 'center',
@@ -217,7 +215,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    btnsText:{
+    btnsText: {
         color: "white",
         fontSize: 16
     }
