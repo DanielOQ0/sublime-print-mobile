@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import store from "../screens/Store"
 import { MaterialIcons } from "@expo/vector-icons";
 import Profile from "../screens/Profile";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator()
 
@@ -83,12 +84,12 @@ function BottomTabsNavigation() {
           />
           <Tab.Screen
 
-            name="shopping-cart"
+            name="Bag"
             component={Cart}
             options={{
               headerShown: false,
               tabBarIcon: ({ color }) => (
-                <MaterialIcons name="shopping-cart" size={24} color={color} />
+                <FontAwesome5 name="shopping-bag" size={24} color={color} />
               ),
             }}
           />

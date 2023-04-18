@@ -61,7 +61,7 @@ function CardsProducts() {
 
         console.log(`Añadido al carrito: ${productToBuy.name}`);
 
-        // navigation.navigate('shopping-cart', { cart: [...cart, productToBuy] });
+        // navigation.navigate('Bag', { cart: [...cart, productToBuy] });
     }
     useEffect(() =>{
         navigation.setOptions({
@@ -69,8 +69,8 @@ function CardsProducts() {
             headerRight: () =>(
                 <TouchableOpacity
                     style={styles.viewCartButton}
-                    onPress={() => navigation.navigate('shopping-cart', { cart })}>
-                    <Text style={styles.viewCartButtonText}><FontAwesome5 name="shopping-bag" size={24} color="black" /> ({cart.length})</Text>
+                    onPress={() => navigation.navigate('Bag', { cart })}>
+                    <Text style={styles.viewCartButtonText}><FontAwesome5 name="shopping-bag" size={24} color="black" /></Text>
                 </TouchableOpacity>
             )
         })
@@ -199,6 +199,9 @@ const styles = StyleSheet.create({
     btnsText:{
         color: "white",
         fontSize: 16
+    },
+    viewCartButton: {
+        marginRight: 10
     }
 });
 
